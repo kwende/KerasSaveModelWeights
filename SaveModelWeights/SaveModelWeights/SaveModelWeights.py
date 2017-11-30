@@ -18,62 +18,24 @@ class EarlyStoppingByLossVal(Callback):
         self.value = value
         self.verbose = verbose
     def on_epoch_end(self, epoch, logs={}):
-        print('epoch end')
-        #print(model.get_weights())
-        ##model.save_weights('c:/users/brush/desktop/weights.h5')
-        #global lastEpoch
-        #current = logs.get("loss")
-        #if current != None and current < self.value:
-        #    self.model.stop_training = True
-        #    lastEpoch = epoch + 1
+        print(model.get_weights())
+        raw_input()
+
 np.random.seed(100)
 
 model = Sequential()
-model.add(Dense(input_dim=2, units=8))
-model.add(Activation('relu'))
-model.add(Dense(input_dim=8, units=1))
+model.add(Dense(input_dim=2, units=5))
+model.add(Activation('sigmoid'))
+model.add(Dense(input_dim=5, units=1))
 model.add(Activation('sigmoid'))
 X = np.array([[0,0],[0,1],[1,0],[1,1]], "float32")
 y = np.array([[0],[1],[1],[0]], "float32")
-sgd = SGD(lr=0.1)
+sgd = SGD(lr=0.5)
 model.compile(loss='binary_crossentropy', optimizer=sgd)
-model.fit(X, y, nb_epoch=1000, batch_size=1)
+print(model.get_weights())
+raw_input()
+model.fit(X, y, nb_epoch=250, batch_size=1, callbacks = [
+            EarlyStoppingByLossVal()
+          ])
 
 print(model.predict_proba(X))
-
-#x = np.array([
-#    [0,0], 
-#    [0,1],
-#    [1,0], 
-#    [1,1]
-#])
-#y = np.array([
-#    [0], 
-#    [1], 
-#    [1], 
-#    [0]
-#])
-
-
-#model.add(Dense(units=8, 
-#                input_dim = 2, 
-#                use_bias = False, 
-#                kernel_initializer = VarianceScaling()))
-#model.add(Dense(units=1, 
-#                use_bias = False, 
-#                kernel_initializer = VarianceScaling()))
-#model.add(Activation('tanh'))
-#model.compile(loss = "mean_squared_error", 
-#              optimizer = SGD(lr = 0.6, 
-#                              momentum = 0.6))
-
-#model.fit(x, y, 
-#          verbose = 1, 
-#          batch_size = 4, 
-#          epochs = 1000, 
-#          callbacks = [
-#            EarlyStoppingByLossVal()
-#          ])
-
-#print(model.predict_proba(x))
-#print("Last epoch: " + str(lastEpoch))
